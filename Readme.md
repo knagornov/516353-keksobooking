@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Константин Нагорнов](https://up.htmlacademy.ru/javascript/13/user/516353).
-* Наставник: `Неизвестно`.
+* Наставник: [Роман Мисюрин](https://up.htmlacademy.ru/javascript/13/user/538267).
 
 ---
 
