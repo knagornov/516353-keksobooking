@@ -1,5 +1,9 @@
 'use strict';
 
+var CARDS_NUMBER = 8;
+var PIN_WIDTH = 50;
+var PIN_HEIGHT = 70;
+
 var OFFERS = [
   {
     TITLE: 'Большая уютная квартира',
@@ -116,12 +120,9 @@ var adsGeneration = function (adsNumber) {
   return ads;
 };
 
-var CARDS_NUMBER = 8;
 var cardsData = adsGeneration(CARDS_NUMBER);
 var pins = document.querySelector('.map__pins');
 var pinTemplate = document.querySelector('#map-card-template').content.querySelector('.map__pin');
-var PIN_WIDTH = 50;
-var PIN_HEIGHT = 70;
 var fragment = document.createDocumentFragment();
 var map = document.querySelector('.map');
 var filtres = document.querySelector('.map__filters-container');
@@ -179,6 +180,7 @@ var makeCard = function (cardData) {
     for (var j = 0; j < cardData.offer.features.length; j++) {
       if (cardFeatures.children[i].classList.contains('popup__feature--' + cardData.offer.features[j])) {
         isAvailable = true;
+        break;
       }
     }
 
