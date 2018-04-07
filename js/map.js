@@ -79,13 +79,12 @@ var getRandomArray = function (arr) {
 
 var getShuffledArray = function (arr) {
   var newArray = arr.concat();
-  newArray.sort(randomSort);
 
-  function randomSort() {
+  var randomSort = function () {
     return Math.random() - 0.5;
-  }
+  };
 
-  return newArray;
+  return newArray.sort(randomSort);
 };
 
 var adsGeneration = function (adsNumber) {
