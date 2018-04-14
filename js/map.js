@@ -123,24 +123,27 @@ var generateAds = function (adsNumber) {
   return generatedAds;
 };
 
-var adsData = generateAds(ADS_NUMBER);
-var cardTemplate = document.querySelector('#map-card-template')
-    .content.querySelector('.map__card');
-var pinTemplate = document.querySelector('#map-card-template')
-    .content.querySelector('.map__pin');
-var pinsFragment = document.createDocumentFragment();
+var adTemplate = document.querySelector('#map-card-template').content;
+var cardTemplate = adTemplate.querySelector('.map__card');
+var pinTemplate = adTemplate.querySelector('.map__pin');
+
 var map = document.querySelector('.map');
 var filtres = map.querySelector('.map__filters-container');
-var adForm = document.querySelector('.ad-form');
-var adFieldsets = adForm.querySelectorAll('.ad-form fieldset');
-var addressField = document.querySelector('#address');
+
+var pinsFragment = document.createDocumentFragment();
 var pinsContainer = document.querySelector('.map__pins');
 var mainPin = pinsContainer.querySelector('.map__pin--main');
 var pins = [];
 var currentPin;
+
+var adForm = document.querySelector('.ad-form');
+var adFieldsets = adForm.querySelectorAll('.ad-form fieldset');
+var addressField = adForm.querySelector('#address');
+
 var renderedCard;
 var cardClose;
 var isActivated = false;
+var adsData = generateAds(ADS_NUMBER);
 
 var makePin = function (adData) {
   var pin = pinTemplate.cloneNode(true);
@@ -167,28 +170,28 @@ var makeCard = function (adData) {
   var cardDescription = card.querySelector('.popup__description');
   var cardPhotos = card.querySelector('.popup__photos');
 
+  var getOfferType = function (offerType) {
+    switch (offerType) {
+      case 'bungalo':
+        return 'Бунгало';
+      case 'house':
+        return 'Дом';
+      case 'palace':
+        return 'Дворец';
+      default:
+        return 'Квартира';
+    }
+  };
+
   cardImage.src = adData.author.avatar;
   cardTitle.textContent = adData.offer.title;
   cardAddress.textContent = adData.offer.address;
+  cardType.textContent = getOfferType(adData.offer.type);
   cardPrice.textContent = adData.offer.price;
   cardCapacity.textContent = adData.offer.rooms + ' комнаты для '
       + adData.offer.guests + ' гостей';
   cardTime.textContent = 'Заезд после ' + adData.offer.checkin + ', выезд до '
       + adData.offer.checkout;
-
-  switch (adData.offer.type) {
-    case 'bungalo':
-      cardType.textContent = 'Бунгало';
-      break;
-    case 'flat':
-      cardType.textContent = 'Квартира';
-      break;
-    case 'house':
-      cardType.textContent = 'Дом';
-      break;
-    case 'palace':
-      cardType.textContent = 'Дворец';
-  }
 
   if (adData.offer.description === '') {
     card.removeChild(cardDescription);
@@ -241,10 +244,6 @@ var renderPins = function () {
 };
 
 var renderCard = function (pin) {
-  if (renderedCard) {
-    unrenderCard();
-  }
-
   for (var i = 0; i < pins.length; i++) {
     if (pins[i] === pin) {
       renderedCard = map.insertBefore(makeCard(adsData[i]), filtres);
@@ -285,9 +284,9 @@ var activatePage = function () {
 };
 
 var setAddress = function () {
-  addressField.value = (parseInt(mainPin.style.left, 10)
+  addressField.value = (mainPin.offsetLeft
       + Math.round(mainPin.offsetWidth / 2)) + ', '
-      + (parseInt(mainPin.style.top, 10) + Math.round(mainPin.offsetHeight));
+      + (mainPin.offsetTop + Math.round(mainPin.offsetHeight));
 };
 
 var onCardCloseClick = function () {
@@ -303,8 +302,12 @@ var onCardEscPress = function (evt) {
 var onPinsContainerClick = function (evt) {
   var pin = evt.target.closest('.map__pin');
 
-  if (!pin || pin === currentPin) {
+  if (!pin || pin === currentPin || pin === mainPin) {
     return;
+  }
+
+  if (renderedCard) {
+    unrenderCard();
   }
 
   renderCard(pin);
@@ -323,11 +326,8 @@ for (var i = 0; i < adFieldsets.length; i++) {
   adFieldsets[i].disabled = true;
 }
 
-addressField.value = (parseInt(mainPin.style.left, 10)
+addressField.value = (mainPin.offsetLeft
     + Math.round(mainPin.offsetWidth / 2)) + ', '
-    + (parseInt(mainPin.style.top, 10) + Math.round(mainPin.offsetHeight / 2));
+    + (mainPin.offsetTop + Math.round(mainPin.offsetHeight / 2));
 
 mainPin.addEventListener('mouseup', onMainPinMouseup);
-mainPin.addEventListener('click', function (evt) {
-  evt.stopPropagation();
-});
