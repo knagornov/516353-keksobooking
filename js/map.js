@@ -249,7 +249,9 @@ var renderCard = function (pin) {
       renderedCard = map.insertBefore(makeCard(adsData[i]), filtres);
 
       cardClose = renderedCard.querySelector('.popup__close');
-      cardClose.addEventListener('click', onCardCloseClick);
+      cardClose.addEventListener('click', function () {
+        unrenderCard();
+      });
       document.addEventListener('keydown', onCardEscPress);
 
       break;
@@ -260,7 +262,6 @@ var renderCard = function (pin) {
 };
 
 var unrenderCard = function () {
-  cardClose.removeEventListener('click', onCardCloseClick);
   document.removeEventListener('keydown', onCardEscPress);
 
   map.removeChild(renderedCard);
@@ -289,10 +290,6 @@ var setAddress = function () {
       + (mainPin.offsetTop + Math.round(mainPin.offsetHeight));
 };
 
-var onCardCloseClick = function () {
-  unrenderCard();
-};
-
 var onCardEscPress = function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
     unrenderCard();
@@ -316,10 +313,9 @@ var onPinsContainerClick = function (evt) {
 var onMainPinMouseup = function () {
   if (!isActivated) {
     activatePage();
+    renderPins();
+    setAddress();
   }
-
-  renderPins();
-  setAddress();
 };
 
 for (var i = 0; i < adFieldsets.length; i++) {
