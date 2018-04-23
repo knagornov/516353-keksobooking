@@ -415,34 +415,32 @@ var checkRoomsCapacity = function () {
   }
 };
 
+window.addEventListener('load', function () {
+  adForm.reset();
+});
 titleFormField.addEventListener('input', function () {
   checkTitleMinLength();
 });
-
 typeFormField.addEventListener('change', function () {
   getPriceByType();
 });
-
 priceFormField.addEventListener('input', function () {
   if (priceFormField.checkValidity() === true) {
     unmarkField(priceFormField);
   }
 });
-
 timeinFormField.addEventListener('change', function () {
   timeoutFormField.value = timeinFormField.value;
 });
 timeoutFormField.addEventListener('change', function () {
   timeinFormField.value = timeoutFormField.value;
 });
-
 roomsFormField.addEventListener('change', function () {
   checkRoomsCapacity();
 });
 capacityFormField.addEventListener('change', function () {
   checkRoomsCapacity();
 });
-
 submitForm.addEventListener('click', function () {
   markFields(formFields);
   markFields(formSelects);
