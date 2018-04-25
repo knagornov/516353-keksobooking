@@ -2,7 +2,6 @@
 
 var ADS_NUMBER = 8;
 var PIN_WIDTH = 50;
-var PIN_HEIGHT = 70;
 var ESC_KEYCODE = 27;
 
 var OFFERS = [
@@ -283,12 +282,6 @@ var activatePage = function () {
   isActivated = true;
 };
 
-var setAddress = function () {
-  addressFormField.value = (mainPin.offsetLeft
-      + Math.round(mainPin.offsetWidth / 2)) + ', '
-      + (mainPin.offsetTop + Math.round(mainPin.offsetHeight));
-};
-
 var onCardEscPress = function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
     unrenderCard();
@@ -309,26 +302,13 @@ var onPinsContainerClick = function (evt) {
   renderCard(pin);
 };
 
-var onMainPinMouseup = function () {
-  if (!isActivated) {
-    activatePage();
-    renderPins();
-    setAddress();
-  }
-};
-
 for (var i = 0; i < adFieldsets.length; i++) {
   adFieldsets[i].disabled = true;
 }
 
-addressFormField.value = (mainPin.offsetLeft
-    + Math.round(mainPin.offsetWidth / 2)) + ', '
-    + (mainPin.offsetTop + Math.round(mainPin.offsetHeight / 2));
-
-mainPin.addEventListener('mouseup', onMainPinMouseup);
-
 // Работа с формой
 
+var PIN_HEIGHT = 82;
 var titleFormField = adForm.querySelector('#title');
 var typeFormField = adForm.querySelector('#type');
 var priceFormField = adForm.querySelector('#price');
@@ -339,6 +319,12 @@ var capacityFormField = adForm.querySelector('#capacity');
 var formFields = adForm.querySelectorAll('input');
 var formSelects = adForm.querySelectorAll('select');
 var submitForm = adForm.querySelector('.ad-form__submit');
+
+var setAddress = function () {
+  addressFormField.value = (mainPin.offsetLeft
+      + Math.round(mainPin.offsetWidth / 2)) + ', '
+      + (mainPin.offsetTop + PIN_HEIGHT);
+};
 
 var markFields = function (fields) {
   for (i = 0; i < fields.length; i++) {
@@ -417,6 +403,9 @@ var checkRoomsCapacity = function () {
 
 window.addEventListener('load', function () {
   adForm.reset();
+  addressFormField.value = (mainPin.offsetLeft
+    + Math.round(mainPin.offsetWidth / 2)) + ', '
+    + (mainPin.offsetTop + Math.round(mainPin.offsetHeight / 2));
 });
 titleFormField.addEventListener('input', function () {
   checkTitleMinLength();
@@ -444,4 +433,76 @@ capacityFormField.addEventListener('change', function () {
 submitForm.addEventListener('click', function () {
   markFields(formFields);
   markFields(formSelects);
+});
+
+// Перетаскивание
+
+var VERTICAL_RANGE = {
+  MIN: 150 - PIN_HEIGHT,
+  MAX: 500 - PIN_HEIGHT
+};
+var horisontalRange = {
+  min: 0,
+  max: pinsContainer.offsetWidth - mainPin.offsetWidth
+};
+
+mainPin.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+
+    var newTop = mainPin.offsetTop - shift.y;
+    var newLeft = mainPin.offsetLeft - shift.x;
+
+    if (newTop < VERTICAL_RANGE.MIN) {
+      newTop = VERTICAL_RANGE.MIN;
+    }
+    if (newTop > VERTICAL_RANGE.MAX) {
+      newTop = VERTICAL_RANGE.MAX;
+    }
+    if (newLeft < horisontalRange.min) {
+      newLeft = horisontalRange.min;
+    }
+    if (newLeft > horisontalRange.max) {
+      newLeft = horisontalRange.max;
+    }
+
+    mainPin.style.top = newTop + 'px';
+    mainPin.style.left = newLeft + 'px';
+
+    setAddress();
+  };
+
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    if (!isActivated) {
+      activatePage();
+      renderPins();
+    }
+
+    setAddress();
+
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
 });
