@@ -497,6 +497,8 @@ mainPin.addEventListener('mousedown', function (evt) {
       renderPins();
     }
 
+    setAddress();
+
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
   };
