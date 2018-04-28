@@ -16,6 +16,8 @@
   var formFields = window.form.adForm.querySelectorAll('input');
   var formSelects = window.form.adForm.querySelectorAll('select');
   var submitForm = window.form.adForm.querySelector('.ad-form__submit');
+  var resetForm = window.form.adForm.querySelector('.ad-form__reset');
+  var successMessage = document.querySelector('.success');
 
   var markFields = function (fields) {
     for (i = 0; i < fields.length; i++) {
@@ -92,6 +94,14 @@
     }
   };
 
+  var submitSuccessHandler = function () {
+    window.page.resetPage();
+    successMessage.classList.remove('hidden');
+    setTimeout(function () {
+      successMessage.classList.add('hidden');
+    }, 2500);
+  };
+
   for (var i = 0; i < window.form.adFieldsets.length; i++) {
     window.form.adFieldsets[i].disabled = true;
   }
@@ -123,8 +133,15 @@
   capacityFormField.addEventListener('change', function () {
     checkRoomsCapacity();
   });
-  submitForm.addEventListener('click', function () {
+  submitForm.addEventListener('click', function (evt) {
     markFields(formFields);
     markFields(formSelects);
+    window.backend.upload(new FormData(window.form.adForm),
+        submitSuccessHandler, window.util.errorHandler);
+    evt.preventDefault();
+  });
+  resetForm.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    window.page.resetPage();
   });
 })();
