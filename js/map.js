@@ -2,24 +2,38 @@
 
 (function () {
   window.map = {
+    MAINPIN_HEIGHT: 82,
+    mapElem: document.querySelector('.map'),
     mainPin: document.querySelector('.map__pin--main'),
-    MAINPIN_HEIGHT: 82
-  };
+    currentPin: null,
+    unrenderPins: function () {
+      for (var i = pinsContainer.children.length - 1; i >= 0; i--) {
+        if (pinsContainer.children[i].className === 'map__pin') {
+          pinsContainer.removeChild(pinsContainer.children[i]);
+        }
+      }
+    },
+    unrenderCard: function () {
+      if (renderedCard) {
+        window.map.mapElem.removeChild(renderedCard);
+      }
+      document.removeEventListener('keydown', onCardEscPress);
 
-  var ESC_KEYCODE = 27;
-  var ADS_NUMBER = 8;
+      renderedCard = null;
+      cardClose = null;
+      window.map.currentPin = null;
+    }
+  };
 
   var VERTICAL_RANGE = {
     MIN: 150 - window.map.MAINPIN_HEIGHT,
     MAX: 500 - window.map.MAINPIN_HEIGHT
   };
 
-  var mapElem = document.querySelector('.map');
-  var filtresElem = mapElem.querySelector('.map__filters-container');
-  var pinsContainer = mapElem.querySelector('.map__pins');
+  var filtresElem = window.map.mapElem.querySelector('.map__filters-container');
+  var pinsContainer = window.map.mapElem.querySelector('.map__pins');
   var pinsFragment = document.createDocumentFragment();
   var pins = [];
-  var currentPin;
 
   var horisontalRange = {
     min: 0,
@@ -28,10 +42,8 @@
 
   var renderedCard;
   var cardClose;
-  var isActivated = false;
-  var adsData = window.generateAdData(ADS_NUMBER);
 
-  var renderPins = function () {
+  var renderPins = function (adsData) {
     for (var i = 0; i < adsData.length; i++) {
       pins[i] = window.makePin(adsData[i]);
       pinsFragment.appendChild(pins[i]);
@@ -40,65 +52,41 @@
     pinsContainer.appendChild(pinsFragment);
   };
 
-  var renderCard = function (pin) {
+  var renderCard = function (adsData) {
     for (var i = 0; i < pins.length; i++) {
-      if (pins[i] === pin) {
-        renderedCard = mapElem.insertBefore(window.makeCard(adsData[i]),
-            filtresElem);
+      if (pins[i] === window.map.currentPin) {
+        renderedCard = window.map.mapElem
+            .insertBefore(window.makeCard(adsData[i]), filtresElem);
 
         cardClose = renderedCard.querySelector('.popup__close');
         cardClose.addEventListener('click', function () {
-          unrenderCard();
+          window.map.unrenderCard();
         });
         document.addEventListener('keydown', onCardEscPress);
 
         break;
       }
     }
-
-    currentPin = pin;
-  };
-
-  var unrenderCard = function () {
-    mapElem.removeChild(renderedCard);
-    document.removeEventListener('keydown', onCardEscPress);
-
-    renderedCard = null;
-    cardClose = null;
-    currentPin = null;
-  };
-
-  var activatePage = function () {
-    mapElem.classList.remove('map--faded');
-    window.form.adForm.classList.remove('ad-form--disabled');
-
-    for (var i = 0; i < window.form.adFieldsets.length; i++) {
-      window.form.adFieldsets[i].disabled = false;
-    }
-
-    pinsContainer.addEventListener('click', onPinsContainerClick);
-
-    isActivated = true;
-  };
-
-  var onCardEscPress = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      unrenderCard();
-    }
   };
 
   var onPinsContainerClick = function (evt) {
-    var pin = evt.target.closest('.map__pin');
+    var newPin = evt.target.closest('.map__pin');
 
-    if (!pin || pin === currentPin || pin === window.map.mainPin) {
+    if (!newPin || newPin === window.map.currentPin
+        || newPin === window.map.mainPin) {
       return;
     }
 
     if (renderedCard) {
-      unrenderCard();
+      window.map.unrenderCard();
     }
 
-    renderCard(pin);
+    window.map.currentPin = newPin;
+    window.backend.load(renderCard, window.util.errorHandler);
+  };
+
+  var onCardEscPress = function (evt) {
+    window.util.isEscEvent(evt, window.map.unrenderCard);
   };
 
   window.map.mainPin.addEventListener('mousedown', function (evt) {
@@ -147,13 +135,14 @@
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
 
-      if (!isActivated) {
-        activatePage();
-        renderPins();
+      if (!window.page.isActivated) {
+        window.page.activatePage();
+        window.backend.load(renderPins, window.util.errorHandler);
       }
 
       window.address.setNewAddress();
 
+      pinsContainer.addEventListener('click', onPinsContainerClick);
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
     };
