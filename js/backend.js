@@ -4,6 +4,13 @@
   var loadURL = 'https://js.dump.academy/keksobooking/data';
   var uploadURL = 'https://js.dump.academy/keksobooking';
 
+  var Code = {
+    SUCCESS: 200,
+    BAD_REQUEST: 400,
+    NOT_FOUND: 404,
+    INTERNAL_SERVER_ERROR: 500,
+  };
+
   window.backend = {
     load: function (onLoad, onError) {
       var errorMessage = 'Не удалось получить информацию о похожих объявлениях.';
@@ -12,14 +19,14 @@
 
       xhr.addEventListener('load', function () {
         switch (xhr.status) {
-          case 200:
+          case Code.SUCCESS:
             onLoad(xhr.response);
             break;
-          case 400:
+          case Code.BAD_REQUEST:
             onError(errorMessage + ' Неверный запрос. Статус ответа: '
                 + xhr.status + '.');
             break;
-          case 404:
+          case Code.NOT_FOUND:
             onError(errorMessage + ' Нужный ресурс не найден. Статус ответа: '
                 + xhr.status + '.');
             break;
@@ -50,10 +57,10 @@
 
       xhr.addEventListener('load', function () {
         switch (xhr.status) {
-          case 200:
+          case Code.SUCCESS:
             onLoad(xhr.response);
             break;
-          case 500:
+          case Code.INTERNAL_SERVER_ERROR:
             onError(errorMessage + ' Внутренняя ошибка сервера. Статус ответа: '
                 + xhr.status + '.');
             break;
