@@ -23,6 +23,7 @@
       window.map.mainPin.style.left = '570px';
 
       window.filter.filtersForm.reset();
+      window.filter.disableFilter(true);
       window.form.adForm.reset();
       window.address.setInitialAddress();
 

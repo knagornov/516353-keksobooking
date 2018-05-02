@@ -98,10 +98,7 @@
     window.map.initialAds = adsData;
     window.map.ads = adsData;
     window.map.renderPins(adsData);
-
-    for (var i = 0; i < window.filter.filtersForm.elements.length; i++) {
-      window.filter.filtersForm.elements[i].disabled = false;
-    }
+    window.filter.disableFilter(false);
   };
 
   window.map.mainPin.addEventListener('mousedown', function (evt) {
