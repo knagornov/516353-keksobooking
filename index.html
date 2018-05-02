@@ -265,6 +265,14 @@
     <button type="button" class="map__pin" style="left: 200px; top: 400px;"><img src="img/avatars/user07.png" width="40" height="40" draggable="false" alt="Метка объявления"></button>
   </template>
 
+  <template id="error-popup-template">
+    <div class="error__popup" style="position: fixed; top: 20%; left: 50%; z-index: 100; display: flex; max-width: 540px; margin: 0px 0px 0px -270px; padding: 40px; justify-content: center; align-items: center; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 16px; line-height: normal; font-family: Roboto, Arial, sans-serif; color: rgb(53, 53, 53); background-color: rgb(255, 255, 255); border-radius: 5px; box-shadow: rgb(255, 101, 71) 0px 0px 2px 2px;">
+      <p class="error-popup__description">Ошибка</p>
+      <button type="button" class="error-popup__close popup__close">Закрыть</button>
+    </div>
+  </template>
+
+
   <script src="js/util.js"></script>
   <script src="js/backend.js"></script>
   <script src="js/make-pin.js"></script>
@@ -273,5 +281,6 @@
   <script src="js/form.js"></script>
   <script src="js/address.js"></script>
   <script src="js/page.js"></script>
+  <script src="js/filter.js"></script>
 </body>
 </html>

@@ -3,20 +3,40 @@
 (function () {
   window.map = {
     MAINPIN_HEIGHT: 82,
-    mapElem: document.querySelector('.map'),
+    mapElement: document.querySelector('.map'),
     mainPin: document.querySelector('.map__pin--main'),
     currentPin: null,
-    unrenderPins: function () {
-      for (var i = pinsContainer.children.length - 1; i >= 0; i--) {
-        if (pinsContainer.children[i].className === 'map__pin') {
-          pinsContainer.removeChild(pinsContainer.children[i]);
+    initialAds: [],
+    ads: [],
+
+    renderPins: function (adsData) {
+      pins = [];
+
+      for (var i = 0; i < adsData.length; i++) {
+        if (i === MAX_PINS_NUMBER) {
+          break;
         }
+
+        pins[i] = window.makePin(adsData[i]);
+        pinsFragment.appendChild(pins[i]);
+      }
+
+      pinsContainer.appendChild(pinsFragment);
+    },
+
+    unrenderPins: function () {
+      for (var i = pins.length - 1; i >= 0; i--) {
+        pinsContainer.removeChild(pins[i]);
       }
     },
+
     unrenderCard: function () {
-      if (renderedCard) {
-        window.map.mapElem.removeChild(renderedCard);
+      if (!renderedCard) {
+        return;
       }
+
+      window.map.mapElement.removeChild(renderedCard);
+
       document.removeEventListener('keydown', onCardEscPress);
 
       renderedCard = null;
@@ -25,48 +45,35 @@
     }
   };
 
-  var VERTICAL_RANGE = {
-    MIN: 150 - window.map.MAINPIN_HEIGHT,
-    MAX: 500 - window.map.MAINPIN_HEIGHT
-  };
+  var MAX_PINS_NUMBER = 5;
 
-  var filtresElem = window.map.mapElem.querySelector('.map__filters-container');
-  var pinsContainer = window.map.mapElem.querySelector('.map__pins');
+  var filtres = window.map.mapElement.querySelector('.map__filters-container');
+  var pinsContainer = window.map.mapElement.querySelector('.map__pins');
   var pinsFragment = document.createDocumentFragment();
   var pins = [];
 
-  var horisontalRange = {
-    min: 0,
-    max: pinsContainer.offsetWidth - window.map.mainPin.offsetWidth
+  var MainPinMoveRange = {
+    TOP: 150 - window.map.MAINPIN_HEIGHT,
+    BOTTOM: 500 - window.map.MAINPIN_HEIGHT,
+    LEFT: 0,
+    right: pinsContainer.offsetWidth - window.map.mainPin.offsetWidth
   };
 
   var renderedCard;
   var cardClose;
 
-  var renderPins = function (adsData) {
-    for (var i = 0; i < adsData.length; i++) {
-      pins[i] = window.makePin(adsData[i]);
-      pinsFragment.appendChild(pins[i]);
-    }
+  var renderCard = function () {
+    var pinIndex = pins.indexOf(window.map.currentPin);
 
-    pinsContainer.appendChild(pinsFragment);
-  };
+    renderedCard = window.map.mapElement.insertBefore(
+        window.makeCard(window.map.ads[pinIndex]), filtres);
 
-  var renderCard = function (adsData) {
-    for (var i = 0; i < pins.length; i++) {
-      if (pins[i] === window.map.currentPin) {
-        renderedCard = window.map.mapElem
-            .insertBefore(window.makeCard(adsData[i]), filtresElem);
+    cardClose = renderedCard.querySelector('.popup__close');
 
-        cardClose = renderedCard.querySelector('.popup__close');
-        cardClose.addEventListener('click', function () {
-          window.map.unrenderCard();
-        });
-        document.addEventListener('keydown', onCardEscPress);
-
-        break;
-      }
-    }
+    cardClose.addEventListener('click', function () {
+      window.map.unrenderCard();
+    });
+    document.addEventListener('keydown', onCardEscPress);
   };
 
   var onPinsContainerClick = function (evt) {
@@ -77,16 +84,24 @@
       return;
     }
 
-    if (renderedCard) {
-      window.map.unrenderCard();
-    }
+    window.map.unrenderCard();
 
     window.map.currentPin = newPin;
-    window.backend.load(renderCard, window.util.errorHandler);
+    renderCard();
   };
 
   var onCardEscPress = function (evt) {
     window.util.isEscEvent(evt, window.map.unrenderCard);
+  };
+
+  var adsLoadSusccesHandler = function (adsData) {
+    window.map.initialAds = adsData;
+    window.map.ads = adsData;
+    window.map.renderPins(adsData);
+
+    for (var i = 0; i < window.filter.filtersForm.elements.length; i++) {
+      window.filter.filtersForm.elements[i].disabled = false;
+    }
   };
 
   window.map.mainPin.addEventListener('mousedown', function (evt) {
@@ -113,17 +128,17 @@
       var newTop = window.map.mainPin.offsetTop - shift.y;
       var newLeft = window.map.mainPin.offsetLeft - shift.x;
 
-      if (newTop < VERTICAL_RANGE.MIN) {
-        newTop = VERTICAL_RANGE.MIN;
+      if (newTop < MainPinMoveRange.TOP) {
+        newTop = MainPinMoveRange.TOP;
       }
-      if (newTop > VERTICAL_RANGE.MAX) {
-        newTop = VERTICAL_RANGE.MAX;
+      if (newTop > MainPinMoveRange.BOTTOM) {
+        newTop = MainPinMoveRange.BOTTOM;
       }
-      if (newLeft < horisontalRange.min) {
-        newLeft = horisontalRange.min;
+      if (newLeft < MainPinMoveRange.LEFT) {
+        newLeft = MainPinMoveRange.LEFT;
       }
-      if (newLeft > horisontalRange.max) {
-        newLeft = horisontalRange.max;
+      if (newLeft > MainPinMoveRange.right) {
+        newLeft = MainPinMoveRange.right;
       }
 
       window.map.mainPin.style.top = newTop + 'px';
@@ -137,7 +152,7 @@
 
       if (!window.page.isActivated) {
         window.page.activatePage();
-        window.backend.load(renderPins, window.util.errorHandler);
+        window.backend.load(adsLoadSusccesHandler, window.util.errorHandler);
       }
 
       window.address.setNewAddress();

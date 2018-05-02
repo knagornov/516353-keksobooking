@@ -2,7 +2,7 @@
 'use strict';
 
 (function () {
-  var addressFormField = document.querySelector('#address');
+  var addressFormField = window.form.adForm.elements.address;
 
   window.address = {
     setInitialAddress: function () {

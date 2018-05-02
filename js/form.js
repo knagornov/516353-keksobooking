@@ -2,54 +2,37 @@
 
 (function () {
   window.form = {
-    adForm: document.querySelector('.ad-form'),
-    adFieldsets: document.querySelectorAll('.ad-form fieldset')
+    adForm: document.querySelector('.ad-form')
   };
 
-  var titleFormField = window.form.adForm.querySelector('#title');
-  var typeFormField = window.form.adForm.querySelector('#type');
-  var priceFormField = window.form.adForm.querySelector('#price');
-  var timeinFormField = window.form.adForm.querySelector('#timein');
-  var timeoutFormField = window.form.adForm.querySelector('#timeout');
-  var roomsFormField = window.form.adForm.querySelector('#room_number');
-  var capacityFormField = window.form.adForm.querySelector('#capacity');
-  var formFields = window.form.adForm.querySelectorAll('input');
-  var formSelects = window.form.adForm.querySelectorAll('select');
+  var typeToPrice = {
+    'bungalo': '0',
+    'flat': '1000',
+    'house': '5000',
+    'palace': '10000',
+  };
+
+  var titleFormField = window.form.adForm.elements.title;
+  var typeFormField = window.form.adForm.elements.type;
+  var priceFormField = window.form.adForm.elements.price;
+  var timeinFormField = window.form.adForm.elements.timein;
+  var timeoutFormField = window.form.adForm.elements.timeout;
+  var roomsFormField = window.form.adForm.elements.rooms;
+  var capacityFormField = window.form.adForm.elements.capacity;
   var submitForm = window.form.adForm.querySelector('.ad-form__submit');
   var resetForm = window.form.adForm.querySelector('.ad-form__reset');
   var successMessage = document.querySelector('.success');
 
-  var markFields = function (fields) {
-    for (i = 0; i < fields.length; i++) {
-      if (fields[i].validity.valid === false) {
-        fields[i].style.outline = '2px solid red';
+  var markInvalidFields = function (formFields) {
+    for (i = 0; i < formFields.length; i++) {
+      if (formFields[i].validity.valid === false) {
+        formFields[i].style.outline = '2px solid red';
       }
     }
   };
 
-  var unmarkField = function (field) {
-    field.style.outline = 'initial';
-  };
-
-  var getPriceByType = function () {
-    switch (typeFormField.value) {
-      case 'flat':
-        priceFormField.min = '1000';
-        priceFormField.placeholder = '1000';
-        return;
-      case 'house':
-        priceFormField.min = '5000';
-        priceFormField.placeholder = '5000';
-        return;
-      case 'palace':
-        priceFormField.min = '10000';
-        priceFormField.placeholder = '10000';
-        return;
-      default:
-        priceFormField.min = '0';
-        priceFormField.placeholder = '0';
-        return;
-    }
+  var unmarkField = function (formField) {
+    formField.style.outline = 'initial';
   };
 
   var checkTitleMinLength = function () {
@@ -57,9 +40,10 @@
 
     if (titleFormField.value.length < 30) {
       titleFormField.setCustomValidity('Минимальное количество символов: 30');
-    } else {
-      unmarkField(titleFormField);
+      return;
     }
+
+    unmarkField(titleFormField);
   };
 
   var checkRoomsCapacity = function () {
@@ -102,8 +86,8 @@
     }, 2500);
   };
 
-  for (var i = 0; i < window.form.adFieldsets.length; i++) {
-    window.form.adFieldsets[i].disabled = true;
+  for (var i = 0; i < window.form.adForm.elements.length; i++) {
+    window.form.adForm.elements[i].disabled = true;
   }
 
   window.addEventListener('load', function () {
@@ -114,7 +98,8 @@
     checkTitleMinLength();
   });
   typeFormField.addEventListener('change', function () {
-    getPriceByType();
+    priceFormField.min = typeToPrice[typeFormField.value];
+    priceFormField.placeholder = typeToPrice[typeFormField.value];
   });
   priceFormField.addEventListener('input', function () {
     if (priceFormField.checkValidity() === true) {
@@ -134,8 +119,10 @@
     checkRoomsCapacity();
   });
   submitForm.addEventListener('click', function (evt) {
-    markFields(formFields);
-    markFields(formSelects);
+    if (window.form.adForm.checkValidity() === false) {
+      markInvalidFields(window.form.adForm.elements);
+      return;
+    }
     window.backend.upload(new FormData(window.form.adForm),
         submitSuccessHandler, window.util.errorHandler);
     evt.preventDefault();
