@@ -22,9 +22,9 @@
           .elements['housing-guests'].value;
 
       var checkPrice = function (adPrice) {
-        return (priceFilter === 'low' && adPrice >= 10000) ||
-            (priceFilter === 'high' && adPrice <= 50000) ||
-            (priceFilter === 'middle' && (adPrice < 10000 || adPrice > 50000));
+        return (priceFilter === 'low' && adPrice < 10000) ||
+            (priceFilter === 'high' && adPrice > 50000) ||
+            (priceFilter === 'middle' && (adPrice >= 10000 && adPrice <= 50000));
       };
 
       var checkFeatures = function (adFeatures) {
@@ -46,8 +46,8 @@
         if (typeFilter !== 'any' && ad.type !== typeFilter ||
             roomsFilter !== 'any' && ad.rooms !== +roomsFilter ||
             guestsFilter !== 'any' && ad.guests !== +guestsFilter ||
-            priceFilter !== 'any' && checkPrice(ad.price) ||
-            checkFeatures(ad.features) === false) {
+            priceFilter !== 'any' && !checkPrice(ad.price) ||
+            !checkFeatures(ad.features)) {
           window.map.ads.splice(i, 1);
           continue;
         }
