@@ -34,6 +34,7 @@
           if (featuresCheckboxes[i].checked === true &&
               adFeatures.indexOf(featuresCheckboxes[i].value) === -1) {
             isMatches = false;
+            break;
           }
         }
         return isMatches;
