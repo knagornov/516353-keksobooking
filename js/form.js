@@ -12,6 +12,9 @@
     'palace': '10000',
   };
 
+  var avatarField = window.form.adForm.elements.avatar;
+  var avatarPreview = window.form.adForm
+      .querySelector('.ad-form-header__preview img');
   var titleFormField = window.form.adForm.elements.title;
   var typeFormField = window.form.adForm.elements.type;
   var priceFormField = window.form.adForm.elements.price;
@@ -19,12 +22,19 @@
   var timeoutFormField = window.form.adForm.elements.timeout;
   var roomsFormField = window.form.adForm.elements.rooms;
   var capacityFormField = window.form.adForm.elements.capacity;
+  var photoTemplate = document.querySelector('#photo-template').content
+      .querySelector('.ad-form__photo');
+  var photosField = window.form.adForm.elements.images;
+  var photosContainer = window.form.adForm
+      .querySelector('.ad-form__photo-container');
+  var uploadElement = window.form.adForm.querySelector('.ad-form__upload');
+  var photoElements = [];
   var submitForm = window.form.adForm.querySelector('.ad-form__submit');
   var resetForm = window.form.adForm.querySelector('.ad-form__reset');
   var successMessage = document.querySelector('.success');
 
   var markInvalidFields = function (formFields) {
-    for (i = 0; i < formFields.length; i++) {
+    for (var i = 0; i < formFields.length; i++) {
       if (formFields[i].validity.valid === false) {
         formFields[i].style.outline = '2px solid red';
       }
@@ -78,6 +88,20 @@
     }
   };
 
+  var resetPreviews = function () {
+    avatarPreview.src = 'img/muffin-grey.svg';
+
+    if (photoElements.length === 0) {
+      return;
+    }
+
+    for (i = photoElements.length - 1; i >= 0; i--) {
+      photosContainer.removeChild(photoElements[i]);
+    }
+
+    photoElements = [];
+  };
+
   var submitSuccessHandler = function () {
     window.page.resetPage();
     successMessage.classList.remove('hidden');
@@ -93,6 +117,9 @@
   window.addEventListener('load', function () {
     window.form.adForm.reset();
     window.address.setInitialAddress();
+  });
+  avatarField.addEventListener('change', function () {
+    window.uploadImage(avatarField, avatarPreview);
   });
   titleFormField.addEventListener('input', function () {
     checkTitleMinLength();
@@ -118,6 +145,9 @@
   capacityFormField.addEventListener('change', function () {
     checkRoomsCapacity();
   });
+  photosField.addEventListener('change', function () {
+    window.uploadImage(photosField);
+  });
   submitForm.addEventListener('click', function (evt) {
     if (window.form.adForm.checkValidity() === false) {
       markInvalidFields(window.form.adForm.elements);
@@ -130,5 +160,15 @@
   resetForm.addEventListener('click', function (evt) {
     evt.preventDefault();
     window.page.resetPage();
+    resetPreviews();
   });
+
+  window.form.createPreview = function () {
+    var previewElement = photoTemplate.cloneNode(true);
+
+    photoElements.unshift(photosContainer.insertBefore(previewElement,
+        uploadElement.nextSibling));
+
+    return photoElements[0].children[0];
+  };
 })();
