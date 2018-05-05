@@ -104,7 +104,7 @@
     window.map.initialAds = adsData;
     window.map.ads = adsData;
     window.map.renderPins(adsData);
-    window.filter.disableFilter(false);
+    window.util.disableForm(window.filter.filtersForm, false);
   };
 
   window.map.mainPin.addEventListener('mousedown', function (evt) {

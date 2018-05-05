@@ -95,7 +95,7 @@
       return;
     }
 
-    for (i = photoElements.length - 1; i >= 0; i--) {
+    for (var i = photoElements.length - 1; i >= 0; i--) {
       photosContainer.removeChild(photoElements[i]);
     }
 
@@ -105,19 +105,13 @@
   var submitSuccessHandler = function () {
     window.page.resetPage();
     successMessage.classList.remove('hidden');
+    window.util.disableForm(window.form.adForm, true);
     setTimeout(function () {
       successMessage.classList.add('hidden');
     }, 2500);
   };
 
-  for (var i = 0; i < window.form.adForm.elements.length; i++) {
-    window.form.adForm.elements[i].disabled = true;
-  }
-
-  window.addEventListener('load', function () {
-    window.form.adForm.reset();
-    window.address.setInitialAddress();
-  });
+  window.util.disableForm(window.form.adForm, true);
   avatarField.addEventListener('change', function () {
     window.uploadImage(avatarField, avatarPreview);
   });

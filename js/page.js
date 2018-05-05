@@ -7,11 +7,7 @@
     activatePage: function () {
       window.map.mapElement.classList.remove('map--faded');
       window.form.adForm.classList.remove('ad-form--disabled');
-
-      for (var i = 0; i < window.form.adForm.elements.length; i++) {
-        window.form.adForm.elements[i].disabled = false;
-      }
-
+      window.util.disableForm(window.form.adForm, false);
       window.page.isActivated = true;
     },
 
@@ -23,7 +19,7 @@
       window.map.mainPin.style.left = '570px';
 
       window.filter.filtersForm.reset();
-      window.filter.disableFilter(true);
+      window.util.disableForm(window.filter.filtersForm, true);
       window.form.adForm.reset();
       window.address.setInitialAddress();
 

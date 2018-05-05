@@ -6,6 +6,12 @@
       .querySelector('.error__popup');
   var lastTimeout;
 
+  window.addEventListener('load', function () {
+    window.filter.filtersForm.reset();
+    window.form.adForm.reset();
+    window.address.setInitialAddress();
+  });
+
   window.util = {
     isEscEvent: function (evt, fun) {
       if (evt.keyCode === ESC_KEYCODE) {
@@ -18,6 +24,12 @@
         window.clearTimeout(lastTimeout);
       }
       lastTimeout = window.setTimeout(fun, interval);
+    },
+
+    disableForm: function (form, status) {
+      for (var i = 0; i < form.elements.length; i++) {
+        form.elements[i].disabled = status;
+      }
     },
 
     errorHandler: function (errorMessage) {

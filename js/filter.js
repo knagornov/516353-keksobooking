@@ -4,12 +4,6 @@
   window.filter = {
     filtersForm: window.map.mapElement.querySelector('.map__filters'),
 
-    disableFilter: function (status) {
-      for (var i = 0; i < window.filter.filtersForm.elements.length; i++) {
-        window.filter.filtersForm.elements[i].disabled = status;
-      }
-    },
-
     filterAds: function () {
       window.map.ads = window.map.initialAds.slice();
       var typeFilter = window.filter.filtersForm
@@ -61,7 +55,7 @@
 
   var featuresCheckboxes = window.filter.filtersForm.elements.features;
 
-  window.filter.disableFilter(true);
+  window.util.disableForm(window.filter.filtersForm, true);
   window.filter.filtersForm.addEventListener('change', function () {
     window.util.debounce(window.filter.filterAds, 500);
   });
