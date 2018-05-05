@@ -198,7 +198,7 @@
               <input type="file" id="images" name="images" class="ad-form__input visually-hidden">
               <label for="images" class="ad-form__drop-zone">Загрузите или&nbsp;перетащите сюда фото</label>
             </div>
-            <div class="ad-form__photo"></div>
+            <div class="ad-form__photo" ></div>
           </div>
         </fieldset>
 
@@ -265,6 +265,12 @@
     <button type="button" class="map__pin" style="left: 200px; top: 400px;"><img src="img/avatars/user07.png" width="40" height="40" draggable="false" alt="Метка объявления"></button>
   </template>
 
+  <template id="photo-template">
+    <div class="ad-form__photo" style="display: flex; justify-content: center; align-items: center; overflow: hidden;">
+      <img src="" width="auto" height="70" alt="Фотография жилья">
+    </div>
+  </template>
+
   <template id="error-popup-template">
     <div class="error__popup" style="position: fixed; top: 20%; left: 50%; z-index: 100; display: flex; max-width: 540px; margin: 0px 0px 0px -270px; padding: 40px; justify-content: center; align-items: center; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 16px; line-height: normal; font-family: Roboto, Arial, sans-serif; color: rgb(53, 53, 53); background-color: rgb(255, 255, 255); border-radius: 5px; box-shadow: rgb(255, 101, 71) 0px 0px 2px 2px;">
       <p class="error-popup__description">Ошибка</p>
@@ -272,13 +278,13 @@
     </div>
   </template>
 
-
   <script src="js/util.js"></script>
   <script src="js/backend.js"></script>
   <script src="js/make-pin.js"></script>
   <script src="js/make-card.js"></script>
   <script src="js/map.js"></script>
   <script src="js/form.js"></script>
+  <script src="js/upload-image.js"></script>
   <script src="js/address.js"></script>
   <script src="js/page.js"></script>
   <script src="js/filter.js"></script>

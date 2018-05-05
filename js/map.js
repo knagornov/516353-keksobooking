@@ -25,9 +25,15 @@
     },
 
     unrenderPins: function () {
+      if (pins.length === 0) {
+        return;
+      }
+
       for (var i = pins.length - 1; i >= 0; i--) {
         pinsContainer.removeChild(pins[i]);
       }
+
+      pins = [];
     },
 
     unrenderCard: function () {
