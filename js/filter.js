@@ -47,7 +47,6 @@
         }
       }
 
-      window.map.unrenderCard();
       window.map.unrenderPins();
       window.map.renderPins(window.map.ads);
     }
@@ -56,7 +55,15 @@
   var featuresCheckboxes = window.filter.filtersForm.elements.features;
 
   window.util.disableForm(window.filter.filtersForm, true);
+  window.filter.filtersForm.addEventListener('keydown', function (evt) {
+    if (evt.target.name === 'features') {
+      window.util.isEnterEvent(evt, function () {
+        evt.target.click();
+      });
+    }
+  });
   window.filter.filtersForm.addEventListener('change', function () {
+    window.map.unrenderCard();
     window.util.debounce(window.filter.filterAds, 500);
   });
 })();

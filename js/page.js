@@ -21,7 +21,11 @@
       window.filter.filtersForm.reset();
       window.util.disableForm(window.filter.filtersForm, true);
       window.form.adForm.reset();
+      window.util.disableForm(window.form.adForm, true);
       window.address.setInitialAddress();
+
+      window.map.mapElement.classList.add('map--faded');
+      window.form.adForm.classList.add('ad-form--disabled');
 
       window.page.isActivated = false;
     }

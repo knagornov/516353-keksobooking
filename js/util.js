@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var ENTER_KEYCODE = 13;
   var ESC_KEYCODE = 27;
   var errorTemplate = document.querySelector('#error-popup-template').content
       .querySelector('.error__popup');
@@ -13,6 +14,12 @@
   });
 
   window.util = {
+    isEnterEvent: function (evt, fun) {
+      if (evt.keyCode === ENTER_KEYCODE) {
+        fun();
+      }
+    },
+
     isEscEvent: function (evt, fun) {
       if (evt.keyCode === ESC_KEYCODE) {
         fun();

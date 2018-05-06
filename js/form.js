@@ -2,7 +2,9 @@
 
 (function () {
   window.form = {
-    adForm: document.querySelector('.ad-form')
+    adForm: document.querySelector('.ad-form'),
+    photosContainer: document.querySelector('.ad-form__photo-container'),
+    photoElements: []
   };
 
   var typeToPrice = {
@@ -25,10 +27,7 @@
   var photoTemplate = document.querySelector('#photo-template').content
       .querySelector('.ad-form__photo');
   var photosField = window.form.adForm.elements.images;
-  var photosContainer = window.form.adForm
-      .querySelector('.ad-form__photo-container');
   var uploadElement = window.form.adForm.querySelector('.ad-form__upload');
-  var photoElements = [];
   var submitForm = window.form.adForm.querySelector('.ad-form__submit');
   var resetForm = window.form.adForm.querySelector('.ad-form__reset');
   var successMessage = document.querySelector('.success');
@@ -91,15 +90,15 @@
   var resetPreviews = function () {
     avatarPreview.src = 'img/muffin-grey.svg';
 
-    if (photoElements.length === 0) {
+    if (window.form.photoElements.length === 0) {
       return;
     }
 
-    for (var i = photoElements.length - 1; i >= 0; i--) {
-      photosContainer.removeChild(photoElements[i]);
+    for (var i = window.form.photoElements.length - 1; i >= 0; i--) {
+      window.form.photosContainer.removeChild(window.form.photoElements[i]);
     }
 
-    photoElements = [];
+    window.form.photoElements = [];
   };
 
   var submitSuccessHandler = function () {
@@ -160,9 +159,9 @@
   window.form.createPreview = function () {
     var previewElement = photoTemplate.cloneNode(true);
 
-    photoElements.unshift(photosContainer.insertBefore(previewElement,
-        uploadElement.nextSibling));
+    window.form.photoElements.unshift(window.form.photosContainer
+        .insertBefore(previewElement, uploadElement.nextSibling));
 
-    return photoElements[0].children[0];
+    return window.form.photoElements[0].children[0];
   };
 })();
