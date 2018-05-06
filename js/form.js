@@ -4,7 +4,20 @@
   window.form = {
     adForm: document.querySelector('.ad-form'),
     photosContainer: document.querySelector('.ad-form__photo-container'),
-    photoElements: []
+    photoElements: [],
+    resetPreviews: function () {
+      avatarPreview.src = 'img/muffin-grey.svg';
+
+      if (window.form.photoElements.length === 0) {
+        return;
+      }
+
+      for (var i = window.form.photoElements.length - 1; i >= 0; i--) {
+        window.form.photosContainer.removeChild(window.form.photoElements[i]);
+      }
+
+      window.form.photoElements = [];
+    }
   };
 
   var typeToPrice = {
@@ -87,20 +100,6 @@
     }
   };
 
-  var resetPreviews = function () {
-    avatarPreview.src = 'img/muffin-grey.svg';
-
-    if (window.form.photoElements.length === 0) {
-      return;
-    }
-
-    for (var i = window.form.photoElements.length - 1; i >= 0; i--) {
-      window.form.photosContainer.removeChild(window.form.photoElements[i]);
-    }
-
-    window.form.photoElements = [];
-  };
-
   var submitSuccessHandler = function () {
     window.page.resetPage();
     successMessage.classList.remove('hidden');
@@ -153,7 +152,7 @@
   resetForm.addEventListener('click', function (evt) {
     evt.preventDefault();
     window.page.resetPage();
-    resetPreviews();
+    window.form.resetPreviews();
   });
 
   window.form.createPreview = function () {

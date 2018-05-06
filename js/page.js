@@ -20,6 +20,7 @@
 
       window.filter.filtersForm.reset();
       window.util.disableForm(window.filter.filtersForm, true);
+      window.form.resetPreviews();
       window.form.adForm.reset();
       window.util.disableForm(window.form.adForm, true);
       window.address.setInitialAddress();
